@@ -1,12 +1,30 @@
 import Image from "next/image";
+import { GetServerSideProps } from "next";
+import { FC } from "react";
 
-async function getUser(id: any) {
+interface User {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  avatar: string;
+}
+
+interface UserPageProps {
+  params: {
+    id: string;
+  };
+}
+
+async function getUser(id: number): Promise<User> {
   const res = await fetch(`https://reqres.in/api/users/${id}`);
   const data = await res.json();
   return data.data;
 }
-async function UserPage({ params }) {
-  const user = await getUser(params.id);
+
+const UserPage: FC<UserPageProps> = async ({ params }) => {
+  const userId = parseInt(params.id, 10);
+  const user = await getUser(userId);
   return (
     <div className="bg-blue-300 p-6 max-w-sm mx-auto rounded-xl shadow-lg flex items-center space-x-4">
       <div className="flex-shrink-0">
@@ -26,6 +44,6 @@ async function UserPage({ params }) {
       </div>
     </div>
   );
-}
+};
 
 export default UserPage;
